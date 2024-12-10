@@ -1,4 +1,24 @@
-/* src/assets/main.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1, h3 {
+    color: #333;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  

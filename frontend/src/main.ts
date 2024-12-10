@@ -1,14 +1,10 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-import AddExpenseForm from './components/AddExpenseForm.vue';
-import CategoryBudget from './components/CategoryBudget.vue';
+import router from './router';
 import './assets/main.css';
 
 const app = createApp(App);
 
-// Register components globally (optional)
-app.component('AddExpenseForm', AddExpenseForm);
-app.component('CategoryBudget', CategoryBudget);
+app.use(router);
 
-// Mount the app
 app.mount('#app');
