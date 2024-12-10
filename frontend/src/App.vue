@@ -1,67 +1,57 @@
 <template>
-  <div>
-    <h1>Expense Tracker</h1>
-    <form @submit.prevent="addExpense">
-      <input v-model="expense.name" placeholder="Expense Name" required />
-      <input v-model="expense.category" placeholder="Category" required />
-      <input v-model="expense.amount" type="number" placeholder="Amount" required />
-      <input v-model="expense.date" type="date" required />
-      <button type="submit">Add Expense</button>
-    </form>
-
-    <h2>Expenses</h2>
-    <ul>
-      <li v-for="expense in expenses" :key="expense.id">
-        {{ expense.name }} - {{ expense.category }} - {{ expense.amount }} - {{ expense.date }}
-      </li>
-    </ul>
+  <div class="container mx-auto p-6">
+    <h1 class="text-4xl font-bold text-center mb-6">Expense Tracker</h1>
+    <AddExpenseForm
+      :categories="categories"
+      :onAddExpense="addExpense"
+    />
+    <div class="mt-8">
+      <h2 class="text-2xl font-semibold mb-4">Expenses</h2>
+      <ul class="space-y-4">
+        <li
+          v-for="expense in expenses"
+          :key="expense.name"
+          class="p-4 border rounded-md shadow-md"
+        >
+          <h3 class="text-xl">{{ expense.name }}</h3>
+          <p>Amount: ${{ expense.amount }}</p>
+          <p>Category: {{ expense.category }}</p>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import axios from 'axios';
+import { defineComponent, ref } from 'vue';
+import AddExpenseForm from './components/AddExpenseForm.vue';
 
 export default defineComponent({
-  data() {
+  name: 'App',
+  components: {
+    AddExpenseForm,
+  },
+  setup() {
+    const categories = ref(['Food', 'Transport', 'Entertainment', 'Utilities']);
+    const expenses = ref<{ name: string; amount: number; category: string }[]>([]);
+
+    const addExpense = (expense: { name: string; amount: number; category: string }) => {
+      expenses.value.push(expense); // Add the expense to the list
+    };
+
     return {
-      expense: {
-        name: '',
-        category: '',
-        amount: 0,
-        date: '',
-      },
-      expenses: [] as Array<{ id: number; name: string; category: string; amount: number; date: string }>,
+      categories,
+      expenses,
+      addExpense,
     };
   },
-  mounted() {
-    this.fetchExpenses();
-  },
-  methods: {
-    async fetchExpenses() {
-      try {
-        const response = await axios.get('http://localhost:5000/expenses');
-        this.expenses = response.data;
-      } catch (error) {
-        console.error('Error fetching expenses:', error);
-      }
-    },
-    async addExpense() {
-      try {
-        const response = await axios.post('http://localhost:5000/expenses', this.expense);
-        this.expenses.push(response.data);
-        this.expense.name = '';
-        this.expense.category = '';
-        this.expense.amount = 0;
-        this.expense.date = '';
-      } catch (error) {
-        console.error('Error adding expense:', error);
-      }
-    }
-  }
 });
 </script>
 
 <style>
-/* Add your styles here */
+/* Add global styles here */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+}
 </style>
