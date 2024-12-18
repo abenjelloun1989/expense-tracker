@@ -65,7 +65,6 @@ class _HomePageState extends State<HomePage> {
 
   void _generateReport() async {
     var report = await ApiService.getReport(month, year);
-    // You can display a modal or navigate to a new page with the report info.
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -100,35 +99,47 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ),
-      floatingActionButton: PopupMenuButton<String>(
-        onSelected: (value) {
-          if (value == 'budget') {
-            _createBudget();
-          } else if (value == 'transaction') {
-            _addTransaction();
-          } else if (value == 'report') {
-            _generateReport();
-          }
+      floatingActionButton: Builder(
+        builder: (context) {
+          return FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () async {
+              // Get positions to show the menu near the FAB
+              final RenderBox button = context.findRenderObject() as RenderBox;
+              final overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+
+              final selectedValue = await showMenu<String>(
+                context: context,
+                position: RelativeRect.fromRect(
+                  button.localToGlobal(Offset.zero) & button.size,
+                  Offset.zero & overlay.size,
+                ),
+                items: [
+                  PopupMenuItem(
+                    value: 'budget',
+                    child: Text('Add Budget'),
+                  ),
+                  PopupMenuItem(
+                    value: 'transaction',
+                    child: Text('Add Transaction'),
+                  ),
+                  PopupMenuItem(
+                    value: 'report',
+                    child: Text('Generate Report'),
+                  ),
+                ],
+              );
+
+              if (selectedValue == 'budget') {
+                _createBudget();
+              } else if (selectedValue == 'transaction') {
+                _addTransaction();
+              } else if (selectedValue == 'report') {
+                _generateReport();
+              }
+            },
+          );
         },
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            value: 'budget',
-            child: Text('Add Budget'),
-          ),
-          PopupMenuItem(
-            value: 'transaction',
-            child: Text('Add Transaction'),
-          ),
-          PopupMenuItem(
-            value: 'report',
-            child: Text('Generate Report'),
-          ),
-        ],
-        child: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            // Show menu by tapping FAB
-        }),
       ),
     );
   }

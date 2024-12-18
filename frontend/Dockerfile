@@ -1,4 +1,4 @@
-FROM cirrusci/flutter:stable-web as build
+FROM ghcr.io/cirruslabs/flutter:3.27.1 as build
 
 WORKDIR /app
 COPY . .
