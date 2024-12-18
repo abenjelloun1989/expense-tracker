@@ -1,20 +1,11 @@
-# Use official Node.js runtime as base image
-FROM node:20
+FROM cirrusci/flutter:stable-web as build
 
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies with --legacy-peer-deps flag
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of the frontend files
 COPY . .
+RUN flutter pub get
+RUN flutter build web
 
-# Expose the port the app runs on (assuming the default port for Vue is 3000)
-EXPOSE 3000
-
-# Start the app
-CMD ["npm", "run", "dev"]
+FROM nginx:alpine
+COPY --from=build /app/build/web /usr/share/nginx/html
+EXPOSE 8081
+CMD ["nginx", "-g", "daemon off;"]
